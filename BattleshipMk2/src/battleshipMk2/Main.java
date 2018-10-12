@@ -28,7 +28,7 @@ public class Main {
 			board.fireAtTile(xCoord, yCoord);
 		}
 		
-		
+		scannerClose();
 	}
 
 	
@@ -50,5 +50,10 @@ public class Main {
 				System.out.println("Invalid Input. Please try again");
 			}
 		}
+	}
+	
+	public void scannerClose()
+	{
+		inputScanner.close();
 	}
 }
