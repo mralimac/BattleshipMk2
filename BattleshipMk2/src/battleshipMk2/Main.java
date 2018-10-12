@@ -7,12 +7,13 @@ public class Main {
 	private Scanner inputScanner = new Scanner(System.in);
 	//End Attribute
 	
+	//Constructor Section
+	//End Constructor
+	
 	//Method Section
 	public static void main(String[] args) 
 	{
 		Board board = new Board();
-		//board.addPlayerShipToBoard();
-		//board.addAIShipToBoard("Ship 1", 5, 2, 0, 0);
 		board.printOutBoard();
 		Computer computerPlayer1 = new Computer(board);
 		
