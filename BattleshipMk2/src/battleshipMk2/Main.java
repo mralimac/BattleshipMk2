@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Main {
 	//Attribute Section 
-	private Scanner inputScanner = new Scanner(System.in);
+	private static Scanner inputScanner = new Scanner(System.in);
 	//End Attribute
 	
 	//Constructor Section
@@ -52,7 +52,7 @@ public class Main {
 		}
 	}
 	
-	public void scannerClose()
+	public static void scannerClose()
 	{
 		inputScanner.close();
 	}
