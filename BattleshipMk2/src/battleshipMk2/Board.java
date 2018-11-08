@@ -1,6 +1,7 @@
 package battleshipMk2;
 
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 
 public class Board extends Main
@@ -48,8 +49,8 @@ public class Board extends Main
 	}
 	
 	//Adds an AI ship to the board
-	public void addAIShipToBoard(String shipName, int shipType, int shipDirection, int shipXCoord, int shipYCoord)
-	{		
+	public void addAIShipToBoard(String shipName, int shipType)
+	{	
 		int shipLength = 0;
 		switch(shipType)
 		{
@@ -63,17 +64,28 @@ public class Board extends Main
 		break;
 		case 5: shipLength = 5;
 		break;
+		}	
+		int randomXCoord = ThreadLocalRandom.current().nextInt(0, this.lengthOfBoard);
+		int randomYCoord = ThreadLocalRandom.current().nextInt(0, this.heightOfBoard);
+		//check all 4 directions if AI ship placement is valid
+		while(canAIPlaceShip(randomXCoord, randomYCoord, shipLength) == 0)
+		{
+			//Reroll the random X Y Coord
+			randomXCoord = ThreadLocalRandom.current().nextInt(0, this.lengthOfBoard);
+			randomYCoord = ThreadLocalRandom.current().nextInt(0, this.heightOfBoard);
 		}
+		int vaildDirection = canAIPlaceShip(randomXCoord, randomYCoord, shipLength);
+		
 		
 		int shipID = shipsOnBoard.size() + 1;
-		placeShipInTiles(shipXCoord, shipYCoord, shipID, shipDirection, shipLength);
-		shipsOnBoard.add(new Ship(shipID, shipType, shipLength, shipDirection, shipXCoord, shipYCoord, shipName));
+		placeShipInTiles(randomXCoord, randomYCoord, shipID, vaildDirection, shipLength);
+		shipsOnBoard.add(new Ship(shipID, shipType, shipLength, vaildDirection, randomXCoord, randomYCoord, shipName));
+		System.out.println("The AI successfully placed a ship");
 	}
 	
 	//Adds a players ship to the board
 	public void addPlayerShipToBoard()
 	{
-		
 		//Ask for the ships name
 		System.out.println("Please enter a ship name");		
 		String shipName = getUserStringInput();
@@ -162,6 +174,18 @@ public class Board extends Main
 			break;
 			}
 		}
+	}
+	
+	public int canAIPlaceShip(int xCoord, int yCoord, int shipLength)
+	{
+		for(int i=1; i < 5; i++)
+		{
+			if(canShipBePlaced(xCoord, yCoord, i, shipLength))
+			{
+				return i;
+			}
+		}
+		return 0;
 	}
 	
 	//Checks if ships still exist on the board
@@ -261,7 +285,7 @@ public class Board extends Main
 		
 		return true;
 	}
-	
+
 	//Checks if the ship is out of bounds
 	public boolean isShipOutOfBounds(int xCoord, int yCoord)
 	{
@@ -310,7 +334,13 @@ public class Board extends Main
 		System.out.println("Section of Ship is: " + shipSection);
 	}
 	
-	//Prints out a somewhat formatted gameboard 
+	//Gets number of ships on the board
+	public void numOfShips()
+	{
+		System.out.println("Ships: " + shipsOnBoard.size());
+	}
+	
+	//Prints out a debug formatted gameboard 
 	public void printOutBoard()
 	{
 		int tileCounter = 0;
@@ -325,6 +355,47 @@ public class Board extends Main
 			}
 			System.out.println(tileOutput);			
 		}
+	}
+	
+	//Prints out a better formatted board
+	public void printOutGamePlayBoard()
+	{
+		int tileCounter = 0;
+		for(int i = 0; i < this.heightOfBoard; i++)
+		{			
+			String tileOutput = "";
+			for(int e = 0; e < this.lengthOfBoard; e++)
+			{				
+				tileOutput = tileOutput + formatValues(tileCounter);				
+				tileCounter++;
+			}
+			System.out.println(tileOutput);			
+		}
+	}
+	
+	//Parse values into formatting string
+	public String formatValues(int tileCounter)
+	{
+		int tileShipID = tilesOnBoard.get(tileCounter).getShipID();
+		boolean hasThisTileBeenHit = tilesOnBoard.get(tileCounter).hasTileHit();
+		if(tileShipID == 0 && !hasThisTileBeenHit)
+		{
+			return "[0]";
+		}
+		else if(hasThisTileBeenHit && tileShipID == 0)
+		{
+			return "[M]";
+		}
+		else if(tileShipID != 0 && !hasThisTileBeenHit)
+		{
+			return "[S]";
+		}
+		else if(tileShipID != 0 && hasThisTileBeenHit)
+		{
+			return "[H]";
+		}
+		return "[E]";
+		
 	}
 	//End Method
 	
