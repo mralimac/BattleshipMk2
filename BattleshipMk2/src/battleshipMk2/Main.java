@@ -13,25 +13,31 @@ public class Main {
 	//Method Section
 	public static void main(String[] args) 
 	{
-		Board board = new Board();		
-		//board.printOutGamePlayBoard();
-		Computer comPlayer = new Computer();
+		//Board board = new Board();	
+		Board aiBoard = new Board();
+		Board aiBoard2 = new Board();
+		//board.printOutBoard();
+		Computer comPlayer1 = new Computer(aiBoard);
+		Computer comPlayer2 = new Computer(aiBoard2);
 		
-		comPlayer.placeShips();
-		Player player1 = new Player();
-		board.addPlayerShipToBoard();
-		board.numOfShips();
-		comPlayer.getAIBoardPrintOut();
-		while(board.shipsExist())
+		Player player1 = new Player();		
+		//board.addPlayerShipToBoard();
+		//board.numOfShips();
+		//comPlayer.getAIBoardPrintOut();
+		//board.printOutGamePlayBoard();
+		aiBoard.printOutGamePlayBoard();
+		aiBoard2.printOutGamePlayBoard();
+		
+		while(aiBoard.shipsExist())
 		{
 			System.out.println("Please specify an X coordinate");
 			int xCoord = player1.getPlayerCoord();
 			System.out.println("Please specify an Y coordinate");
 			int yCoord = player1.getPlayerCoord();		
-			board.fireAtTile(xCoord, yCoord);
-			board.printOutGamePlayBoard();
+			aiBoard.fireAtTile(xCoord, yCoord);
+			aiBoard.printOutGamePlayBoard();
 		}
-		
+		System.out.println("Gameover!");
 		scannerClose();
 	}
 
