@@ -23,9 +23,9 @@ public class Computer
 	{
 		aiBoard.addAIShipToBoard("AI Minesweeper", 1);
 		aiBoard.addAIShipToBoard("AI Corvette", 2);
-		//addAIShipToBoard("AI Submarine", 3, 1, 7, 6);
-		//addAIShipToBoard("AI Battleship", 4, 2, 0, 7);
-		//addAIShipToBoard("AI Aircraft Carrier", 5, 2, 2, 4);
+		aiBoard.addAIShipToBoard("AI Submarine", 3);
+		aiBoard.addAIShipToBoard("AI Battleship", 4);
+		aiBoard.addAIShipToBoard("AI Aircraft Carrier", 5);
 	}
 	
 	public void fire()

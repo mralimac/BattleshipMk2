@@ -70,7 +70,7 @@ public class Board extends Main
 		//check all 4 directions if AI ship placement is valid
 		while(canAIPlaceShip(randomXCoord, randomYCoord, shipLength) == 0)
 		{
-			//Reroll the random X Y Coord
+			System.out.println("Reroll the AI ship placement");
 			randomXCoord = ThreadLocalRandom.current().nextInt(0, this.lengthOfBoard);
 			randomYCoord = ThreadLocalRandom.current().nextInt(0, this.heightOfBoard);
 		}
@@ -81,6 +81,7 @@ public class Board extends Main
 		placeShipInTiles(randomXCoord, randomYCoord, shipID, vaildDirection, shipLength);
 		shipsOnBoard.add(new Ship(shipID, shipType, shipLength, vaildDirection, randomXCoord, randomYCoord, shipName));
 		System.out.println("The AI successfully placed a ship");
+		System.out.println("AI Ship Details:\n Ship ID: " + shipID + "\nShipType: " + shipType + "\nShipLength: "+ shipLength + "\nShip Direction: " + vaildDirection + "\nX and Y Coord: " + randomXCoord + "," + randomYCoord);
 	}
 	
 	//Adds a players ship to the board
@@ -277,9 +278,13 @@ public class Board extends Main
 			{
 				return false;
 			}
-			if(getTile(xCoord, yCoord).getShipID() != 0)
+			System.out.println("Attempted to check coords: " + xCoord + "," + yCoord);
+			if(xCoord < 0 || xCoord > this.lengthOfBoard || yCoord < 0 || yCoord > this.heightOfBoard)
 			{
-				return false;
+				if(getTile(xCoord, yCoord).getShipID() != 0)
+				{
+					return false;
+				}
 			}
 		}	
 		
@@ -306,6 +311,7 @@ public class Board extends Main
 				return tilesOnBoard.get(i);
 			}
 		}
+		System.out.println("This is not a valid tile!");
 		return null;
 	}
 	

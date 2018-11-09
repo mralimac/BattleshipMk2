@@ -18,7 +18,7 @@ public class Tile
 		this.tileID = tileID;
 		this.xCoord = xCoord;
 		this.yCoord = yCoord;
-		this.shipID = shipID;
+		this.shipID = 0;
 		this.sectionOfShip = sectionOfShip;
 		this.hasBeenHit = false;
 	}
