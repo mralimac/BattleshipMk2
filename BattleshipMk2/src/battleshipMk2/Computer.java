@@ -45,8 +45,10 @@ public class Computer
 		aiBoard.getTile(randomXCoord, randomYCoord);
 	}
 	
-	public boolean plotFiringSolution()
+	public boolean plotFiringSolution(int xCoord, int yCoord)
 	{
+		aiBoard.getTile(xCoord, yCoord);
+		
 		//Use this function to write the logic of targeting each tile and then relay back to the fire function on if it should fire or not
 		return false;
 	}

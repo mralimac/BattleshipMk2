@@ -78,5 +78,26 @@ public class Tile
 	{
 		this.sectionOfShip = section;
 	}
+	
+	public String getContentOfTile()
+	{
+		if(shipID == 0 && !this.hasBeenHit)
+		{
+			return "Empty";
+		}
+		else if(this.hasBeenHit && shipID == 0)
+		{
+			return "Miss";
+		}
+		else if(shipID != 0 && !this.hasBeenHit)
+		{
+			return ""+shipID+"";
+		}
+		else if(shipID != 0 && hasBeenHit)
+		{
+			return "Hit";
+		}
+		return "Empty";
+	}
 	//End Method
 }
