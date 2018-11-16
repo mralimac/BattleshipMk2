@@ -15,10 +15,10 @@ public class Main {
 	{
 		//Board board = new Board();	
 		Board aiBoard = new Board();
-		Board aiBoard2 = new Board();
+		//Board aiBoard2 = new Board();
 		//board.printOutBoard();
 		Computer comPlayer1 = new Computer(aiBoard);
-		Computer comPlayer2 = new Computer(aiBoard2);
+		//Computer comPlayer2 = new Computer(aiBoard2);
 		
 		Player player1 = new Player();		
 		//board.addPlayerShipToBoard();
@@ -26,7 +26,8 @@ public class Main {
 		//comPlayer.getAIBoardPrintOut();
 		//board.printOutGamePlayBoard();
 		aiBoard.printOutGamePlayBoard();
-		aiBoard2.printOutGamePlayBoard();
+		System.out.println("");
+		//aiBoard2.printOutGamePlayBoard();
 		
 		while(aiBoard.shipsExist())
 		{

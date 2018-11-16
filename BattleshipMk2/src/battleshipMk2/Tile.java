@@ -91,7 +91,7 @@ public class Tile
 		}
 		else if(shipID != 0 && !this.hasBeenHit)
 		{
-			return ""+shipID+"";
+			return shipID+"";
 		}
 		else if(shipID != 0 && hasBeenHit)
 		{

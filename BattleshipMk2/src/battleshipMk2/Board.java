@@ -240,7 +240,7 @@ public class Board extends Main
 				Ship shipGettingHit = getShip(shipID);
 				shipGettingHit.hitShip(shipSection);		
 
-				System.out.println(shipGettingHit.getShipName() +" ( "+ shipGettingHit.getShipTypeString() +" ) has been hit!");
+				System.out.println(shipGettingHit.getShipName() +" ("+ shipGettingHit.getShipTypeString() +") has been hit!");
 				System.out.println("Remaining Health of " + shipGettingHit.getShipName() + ":" + shipGettingHit.getShipHealth() + "/" + shipGettingHit.getShipLength());
 				if(shipGettingHit.isShipSunk())
 				{
