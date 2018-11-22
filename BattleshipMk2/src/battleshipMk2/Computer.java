@@ -59,13 +59,14 @@ public class Computer
 		
 	}
 	
-	
+	//AI picks and fires at a target
 	public String fireAtTarget(int xCoord, int yCoord)
 	{
 		aiBoard.fireAtTile(xCoord, yCoord);
 		return aiBoard.getTile(xCoord, yCoord).getContentOfTile();		
 	}
 	
+	//Records the content of the tile internally
 	public void recordTileContent(int xCoord, int yCoord, String contentOfTile)
 	{
 		if(contentOfTile.equalsIgnoreCase("Empty"))
@@ -74,6 +75,7 @@ public class Computer
 		}
 	}
 	
+	//Checks if the AI picked a sunken or missed tile
 	public boolean isTileSunkenOrMiss(int xCoord, int yCoord)
 	{
 		if(aiBoard.getTile(xCoord, yCoord).getContentOfTile().equalsIgnoreCase("Miss") || aiBoard.getTile(xCoord, yCoord).getContentOfTile().equalsIgnoreCase(""))
@@ -102,20 +104,16 @@ public class Computer
 		return true;
 	}
 	
+	//Gets the AI's board
 	public Board getAIBoard()
 	{
 		return this.aiBoard;
 	}
 	
+	//Gets what the AI can see
 	public void getAIBoardPrintOut()
 	{
 		this.aiBoard.printOutGamePlayBoard();
-	}
-	
-	public void givenList_shouldReturnARandomElement() {
-	    List<Integer> givenList = Arrays.asList(1, 2, 3);
-	    Random rand = new Random();
-	    int randomElement = givenList.get(rand.nextInt(givenList.size()));
 	}
 	//End Method
 }

@@ -39,7 +39,7 @@ public class Ship
 	//Returns the name of the ship as a String
 	public String getShipTypeString()
 	{
-		switch(typeOfShip)
+		switch(this.typeOfShip)
 		{
 		case 1: return "Minesweeper";
 		case 2: return "Corvette";
@@ -77,9 +77,9 @@ public class Ship
 	//Adjusts the ship's health and destroys a section of the ship
 	public void hitShip(int sectionOfShip)
 	{
-		if(shipSections.get(sectionOfShip) != 1)
+		if(this.shipSections.get(sectionOfShip) != 1)
 		{
-			shipSections.set(sectionOfShip, 1);
+			this.shipSections.set(sectionOfShip, 1);
 			this.healthOfShip--;
 		}
 	}
@@ -87,9 +87,9 @@ public class Ship
 	//Checks if the ship is sunk 
 	public boolean isShipSunk()
 	{
-		for(int i = 0; i < shipSections.size(); i++)
+		for(int i = 0; i < this.shipSections.size(); i++)
 		{
-			if(shipSections.get(i) == 0)
+			if(this.shipSections.get(i) == 0)
 			{
 				return false;
 			}
