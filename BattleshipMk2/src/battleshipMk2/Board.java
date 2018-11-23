@@ -44,7 +44,7 @@ public class Board extends Main
 				xCoord = 0;
 				yCoord++;
 			}
-			tilesOnBoard.add(new Tile(i, xCoord, yCoord, 0, 0));
+			getTilesOnBoard().add(new Tile(i, xCoord, yCoord, 0, 0));
 			xCoord++;
 		}
 	}
@@ -253,11 +253,11 @@ public class Board extends Main
 		public ArrayList<Tile> getAllTilesByShipID(int shipID)
 		{
 			ArrayList<Tile> arrayListOfSelectedTiles = new ArrayList<Tile>();
-			for(int i = 0; i < tilesOnBoard.size(); i++)
+			for(int i = 0; i < getTilesOnBoard().size(); i++)
 			{
-				if(tilesOnBoard.get(i).getShipID() == shipID)
+				if(getTilesOnBoard().get(i).getShipID() == shipID)
 				{
-					arrayListOfSelectedTiles.add(tilesOnBoard.get(i));
+					arrayListOfSelectedTiles.add(getTilesOnBoard().get(i));
 				}
 			}
 			return arrayListOfSelectedTiles;
@@ -267,11 +267,11 @@ public class Board extends Main
 	public ArrayList<Tile> getAllTilesByContent(String contentOfTile)
 	{
 		ArrayList<Tile> arrayListOfSelectedTiles = new ArrayList<Tile>();
-		for(int i = 0; i < tilesOnBoard.size(); i++)
+		for(int i = 0; i < getTilesOnBoard().size(); i++)
 		{
-			if(tilesOnBoard.get(i).getContentOfTile().equalsIgnoreCase(contentOfTile))
+			if(getTilesOnBoard().get(i).getContentOfTile().equalsIgnoreCase(contentOfTile))
 			{
-				arrayListOfSelectedTiles.add(tilesOnBoard.get(i));
+				arrayListOfSelectedTiles.add(getTilesOnBoard().get(i));
 			}
 		}
 		return arrayListOfSelectedTiles;
@@ -367,11 +367,11 @@ public class Board extends Main
 	//Returns the tile object at the specified coords
 	public Tile getTile(int xCoord, int yCoord)
 	{
-		for(int i = 0; i < tilesOnBoard.size(); i++)
+		for(int i = 0; i < getTilesOnBoard().size(); i++)
 		{
-			if(tilesOnBoard.get(i).getXCoord() == xCoord && tilesOnBoard.get(i).getYCoord() == yCoord)
+			if(getTilesOnBoard().get(i).getXCoord() == xCoord && getTilesOnBoard().get(i).getYCoord() == yCoord)
 			{
-				return tilesOnBoard.get(i);
+				return getTilesOnBoard().get(i);
 			}
 		}
 		System.out.println("This is not a valid tile!" + "Coords: " + xCoord + "," + yCoord);
@@ -420,7 +420,7 @@ public class Board extends Main
 			String tileOutput = "";
 			for(int e = 0; e < this.lengthOfBoard; e++)
 			{				
-				tileOutput = tileOutput + tilesOnBoard.get(tileCounter).getFullContent();
+				tileOutput = tileOutput + getTilesOnBoard().get(tileCounter).getFullContent();
 
 				tileCounter++;
 			}
@@ -453,9 +453,9 @@ public class Board extends Main
 	//Parse values into formatting string
 	public String formatValues(int tileCounter)
 	{
-		int tileShipID = tilesOnBoard.get(tileCounter).getShipID();
-		boolean hasThisTileBeenHit = tilesOnBoard.get(tileCounter).hasTileHit();
-		int shipStatus = tilesOnBoard.get(tileCounter).getShipStatus();
+		int tileShipID = getTilesOnBoard().get(tileCounter).getShipID();
+		boolean hasThisTileBeenHit = getTilesOnBoard().get(tileCounter).hasTileHit();
+		int shipStatus = getTilesOnBoard().get(tileCounter).getShipStatus();
 		if(tileShipID == 0 && !hasThisTileBeenHit)
 		{
 			return "[ ]";
@@ -488,7 +488,10 @@ public class Board extends Main
 	{
 		return this.heightOfBoard;
 	}
-	
+
+	public ArrayList<Tile> getTilesOnBoard() {
+		return tilesOnBoard;
+	}
 	//End Method
 	
 }

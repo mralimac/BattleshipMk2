@@ -81,6 +81,8 @@ public class Computer
 		didTheAIHit(selectedTile);
 		//Step 4: Recheck the AI's internal logic on which tiles are sunk or not
 		removeHitTilesAfterSinking();
+		//Step 5: There is a infintely small chance of the AI mistaking a minesweeper for a blown up ship if the circumstances are just perfect
+		checkForAnomlies();
 		
 		//So the AI will pick a tile with H on it as a starting point
 		//Check each tile around it for a M, in which case it will ignore that direction
@@ -179,6 +181,23 @@ public class Computer
 			{
 				tilesThatAreSunk.add(tilesThatAreHit.get(i));
 				tilesThatAreHit.remove(i);
+			}
+		}
+	}
+	
+	public void checkForAnomlies()
+	{
+		for(int i = 0; i < aiBoard.getTilesOnBoard().size(); i++)
+		{
+			if(aiBoard.getTilesOnBoard().get(i).getContentOfTile() == "Hit")
+			{
+				for(int x = 0; x < tilesThatAreHit.size(); x++)
+				{
+					if(tilesThatAreHit.get(x).getXCoord() != aiBoard.getTilesOnBoard().get(i).getXCoord() && tilesThatAreHit.get(x).getYCoord() != aiBoard.getTilesOnBoard().get(i).getYCoord())
+					{
+						tilesThatAreHit.add(aiBoard.getTilesOnBoard().get(i));
+					}
+				}
 			}
 		}
 	}
