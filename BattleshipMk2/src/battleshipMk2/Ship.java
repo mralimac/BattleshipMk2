@@ -48,12 +48,18 @@ public class Ship
 		case 5: return "Aircraft Carrier";
 		}
 		return null;
-	}
+	}	
 	
 	//Returns the ship's ID number
 	public int getShipID()
 	{
 		return this.shipID;
+	}
+	
+	//Sets the ships name
+	public void setShipName(String shipName)
+	{
+		this.shipName = shipName;
 	}
 	
 	//Returns the ship's name
@@ -96,5 +102,21 @@ public class Ship
 		}
 		return true;
 	}
+	
+	//Returns the Ship Direction
+	public int getShipDirection() {
+		return this.shipDirection;
+	}
+	
+	//Returns the XCoord	
+	public int getXCoord() {
+		return this.xCoord;
+	}
+	//Returns the YCoord
+	
+	public int getYCoord() {
+		return this.yCoord;
+	}
+	
 	//End Method
 }

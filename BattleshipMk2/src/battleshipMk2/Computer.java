@@ -2,10 +2,7 @@ package battleshipMk2;
 
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.ArrayList;
-import java.util.Arrays;
 
-import java.util.List;
-import java.util.Random;
 
 public class Computer
 {
@@ -33,6 +30,18 @@ public class Computer
 //		aiBoard.addAIShipToBoard("AI Submarine", 3);
 //		aiBoard.addAIShipToBoard("AI Battleship", 4);		
 //		aiBoard.addAIShipToBoard("AI Aircraft Carrier", 5);
+	}
+	
+	//Sets computer score
+	public void setComScore(int comScore)
+	{
+		this.comScore = comScore;
+	}
+	
+	//Gets computer score
+	public int getComScore()
+	{
+		return this.comScore;
 	}
 	
 	public void fire()

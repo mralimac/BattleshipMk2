@@ -20,7 +20,7 @@ public class Main {
 		Computer comPlayer1 = new Computer(aiBoard);
 		//Computer comPlayer2 = new Computer(aiBoard2);
 		
-		Player player1 = new Player();		
+		Player player1 = new Player("Ali");		
 		//board.addPlayerShipToBoard();
 		//board.numOfShips();
 		//comPlayer.getAIBoardPrintOut();
