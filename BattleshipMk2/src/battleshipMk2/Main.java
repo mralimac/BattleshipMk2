@@ -11,16 +11,17 @@ public class Main {
 	//End Constructor
 	
 	//Method Section
-	public static void main(String[] args) 
+	public static void main(String[] args) throws InterruptedException 
 	{
 		//Board board = new Board();	
 		Board aiBoard = new Board();
 		//Board aiBoard2 = new Board();
 		//board.printOutBoard();
 		Computer comPlayer1 = new Computer(aiBoard);
+		comPlayer1.fire();
 		//Computer comPlayer2 = new Computer(aiBoard2);
 		
-		Player player1 = new Player("Ali");		
+		//Player player1 = new Player("Ali");		
 		//board.addPlayerShipToBoard();
 		//board.numOfShips();
 		//comPlayer.getAIBoardPrintOut();
@@ -31,13 +32,21 @@ public class Main {
 		
 		while(aiBoard.shipsExist())
 		{
-			System.out.println("Please specify an X coordinate");
-			int xCoord = player1.getPlayerCoord();
-			System.out.println("Please specify an Y coordinate");
-			int yCoord = player1.getPlayerCoord();		
-			aiBoard.fireAtTile(xCoord, yCoord);
-			aiBoard.printOutGamePlayBoard();
+			comPlayer1.fire();
+			comPlayer1.getAIBoardPrintOut();
+			Thread.sleep(1000);
 		}
+		
+		
+//		while(aiBoard.shipsExist())
+//		{
+//			System.out.println("Please specify an X coordinate");
+//			int xCoord = player1.getPlayerCoord();
+//			System.out.println("Please specify an Y coordinate");
+//			int yCoord = player1.getPlayerCoord();		
+//			aiBoard.fireAtTile(xCoord, yCoord);
+//			aiBoard.printOutGamePlayBoard();
+//		}
 		System.out.println("Gameover!");
 		scannerClose();
 	}

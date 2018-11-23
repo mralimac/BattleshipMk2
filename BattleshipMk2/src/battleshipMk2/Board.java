@@ -197,6 +197,23 @@ public class Board extends Main
 		return 0;
 	}
 	
+	public boolean isTileOutOfBounds(Tile tileToCheck)
+	{
+		if(tileToCheck == null)
+		{
+			return true;
+		}
+		if(tileToCheck.getXCoord() < 0 || tileToCheck.getXCoord() > this.lengthOfBoard)
+		{
+			return true;
+		}
+		if(tileToCheck.getYCoord() < 0 || tileToCheck.getYCoord() > this.heightOfBoard)
+		{
+			return true;
+		}
+		return false;
+	}
+	
 	//Checks if ships still exist on the board
 	public boolean shipsExist()
 	{
@@ -214,6 +231,13 @@ public class Board extends Main
 	//Runs if a ship is sunk, and removes it from the game
 	public void shipSunk(int shipID)
 	{
+		//Set all tiles for this ship to sunk
+		ArrayList<Tile> tilesToSink = getAllTilesByShipID(shipID);
+		for(int x = 0; x < tilesToSink.size(); x++)
+		{
+			tilesToSink.get(x).setShipStatus(1);
+		}
+		
 		for(int i = 0; i < shipsOnBoard.size(); i ++)
 		{
 			if(shipsOnBoard.get(i).getShipID() == shipID)
@@ -222,8 +246,35 @@ public class Board extends Main
 				shipsOnBoard.remove(i);	
 				this.numOfShips--;
 			}
+		}		
+	}
+	
+	//This function searches all tiles on the board that match a certain content type and returns a list of them
+		public ArrayList<Tile> getAllTilesByShipID(int shipID)
+		{
+			ArrayList<Tile> arrayListOfSelectedTiles = new ArrayList<Tile>();
+			for(int i = 0; i < tilesOnBoard.size(); i++)
+			{
+				if(tilesOnBoard.get(i).getShipID() == shipID)
+				{
+					arrayListOfSelectedTiles.add(tilesOnBoard.get(i));
+				}
+			}
+			return arrayListOfSelectedTiles;
 		}
-		
+	
+	//This function searches all tiles on the board that match a certain content type and returns a list of them
+	public ArrayList<Tile> getAllTilesByContent(String contentOfTile)
+	{
+		ArrayList<Tile> arrayListOfSelectedTiles = new ArrayList<Tile>();
+		for(int i = 0; i < tilesOnBoard.size(); i++)
+		{
+			if(tilesOnBoard.get(i).getContentOfTile().equalsIgnoreCase(contentOfTile))
+			{
+				arrayListOfSelectedTiles.add(tilesOnBoard.get(i));
+			}
+		}
+		return arrayListOfSelectedTiles;
 	}
 	
 	//Runs when a shot is fired, this blows up a tile, and damages/sinks a ship if it was on that tile
@@ -404,9 +455,14 @@ public class Board extends Main
 	{
 		int tileShipID = tilesOnBoard.get(tileCounter).getShipID();
 		boolean hasThisTileBeenHit = tilesOnBoard.get(tileCounter).hasTileHit();
+		int shipStatus = tilesOnBoard.get(tileCounter).getShipStatus();
 		if(tileShipID == 0 && !hasThisTileBeenHit)
 		{
 			return "[ ]";
+		}
+		else if(shipStatus == 1)
+		{
+			return "[~]";
 		}
 		else if(hasThisTileBeenHit && tileShipID == 0)
 		{

@@ -10,6 +10,7 @@ public class Tile
 	private int shipID;
 	private int sectionOfShip;
 	private boolean hasBeenHit;
+	private int shipStatus;
 	//End Attribute
 	
 	//Constructor Section
@@ -21,6 +22,7 @@ public class Tile
 		this.shipID = 0;
 		this.sectionOfShip = sectionOfShip;
 		this.hasBeenHit = false;
+		this.shipStatus = 0;
 	}
 	//End Constructor
 	
@@ -79,21 +81,35 @@ public class Tile
 		this.sectionOfShip = section;
 	}
 	
-	public String getContentOfTile()
+	public void setShipStatus(int newStatus)
 	{
+		this.shipStatus = newStatus;
+	}
+	
+	public int getShipStatus()
+	{
+		return this.shipStatus;
+	}
+	
+	public String getContentOfTile()
+	{		
 		if(shipID == 0 && !this.hasBeenHit)
 		{
 			return "Empty";
+		}
+		else if(this.shipStatus == 1)
+		{
+			return "Sunk";
 		}
 		else if(this.hasBeenHit && shipID == 0)
 		{
 			return "Miss";
 		}
-		else if(shipID != 0 && !this.hasBeenHit)
+		else if(shipID != 0 && !this.hasBeenHit && this.shipStatus != 1)
 		{
 			return shipID+"";
 		}
-		else if(shipID != 0 && hasBeenHit)
+		else if(shipID != 0 && hasBeenHit && this.shipStatus != 1)
 		{
 			return "Hit";
 		}

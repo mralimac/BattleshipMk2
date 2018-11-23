@@ -26,10 +26,10 @@ public class Computer
 	public void placeShips()
 	{
 		aiBoard.addAIShipToBoard("AI Minesweeper", 1);
-//		aiBoard.addAIShipToBoard("AI Corvette", 2);
-//		aiBoard.addAIShipToBoard("AI Submarine", 3);
-//		aiBoard.addAIShipToBoard("AI Battleship", 4);		
-//		aiBoard.addAIShipToBoard("AI Aircraft Carrier", 5);
+		aiBoard.addAIShipToBoard("AI Corvette", 2);
+		aiBoard.addAIShipToBoard("AI Submarine", 3);
+		aiBoard.addAIShipToBoard("AI Battleship", 4);		
+		aiBoard.addAIShipToBoard("AI Aircraft Carrier", 5);
 	}
 	
 	//Sets computer score
@@ -44,8 +44,44 @@ public class Computer
 		return this.comScore;
 	}
 	
-	public void fire()
+	public void fire() throws InterruptedException
 	{
+		Tile selectedTile = null;
+		//Step 1: Check for Hit Tiles
+		if(isThereAnyHitTiles())
+		{
+			//Step 1A: If there is a hit tile available, then pick one at random
+			int randomNumberToPickTileWith = ThreadLocalRandom.current().nextInt(0, this.tilesThatAreHit.size());
+			Tile randomHitTile = tilesThatAreHit.get(randomNumberToPickTileWith);
+			//Step 1B: With a random hit tile selected, check the surrounding tiles for available tiles
+			Tile surroundingTilePicked = pickASurroundingTile(randomHitTile.getXCoord(), randomHitTile.getYCoord());
+			//Step 1C: Check to make sure the tile picked isn't null, if it is, reroll the random tile to hit
+			while(surroundingTilePicked == null)
+			{
+				//Step 1Ci: If there is a hit tile available, then pick one at random
+				randomNumberToPickTileWith = ThreadLocalRandom.current().nextInt(0, this.tilesThatAreHit.size());
+				randomHitTile = tilesThatAreHit.get(randomNumberToPickTileWith);
+				//Step 1Cii: With a random hit tile selected, check the surrounding tiles for available tiles
+				surroundingTilePicked = pickASurroundingTile(randomHitTile.getXCoord(), randomHitTile.getYCoord());	
+			}
+			//Step 1D: With the hit tile selected and verified to be empty, assign it to the general selection
+			selectedTile = surroundingTilePicked;
+		}
+		//Step 2: With no hit tiles available, then fire at random
+		else
+		{
+			//Step 2A: Select a random Tile on the board to fire at
+			Tile randomFireTile = fireAtRandom();
+			//Step 2B: Fire at target
+			selectedTile = randomFireTile;
+		}
+		//Step 3: Fire at the general selected tile
+		fireAtTarget(selectedTile);
+		//Step 3: Check if the AI hit a ship or not
+		didTheAIHit(selectedTile);
+		//Step 4: Recheck the AI's internal logic on which tiles are sunk or not
+		removeHitTilesAfterSinking();
+		
 		//So the AI will pick a tile with H on it as a starting point
 		//Check each tile around it for a M, in which case it will ignore that direction
 		//If two H tiles are in a row, it will want to target the next tile in line
@@ -55,7 +91,7 @@ public class Computer
 		
 	}
 	
-	public void fireAtRandom()
+	public Tile fireAtRandom()
 	{
 		int randomXCoord = ThreadLocalRandom.current().nextInt(0, this.aiBoard.getLengthOfBoard());
 		int randomYCoord = ThreadLocalRandom.current().nextInt(0, this.aiBoard.getHeightOfBoard());
@@ -65,31 +101,151 @@ public class Computer
 			randomXCoord = ThreadLocalRandom.current().nextInt(0, this.aiBoard.getLengthOfBoard());
 			randomYCoord = ThreadLocalRandom.current().nextInt(0, this.aiBoard.getHeightOfBoard());			
 		}
+		return aiBoard.getTile(randomXCoord, randomYCoord);
 		
 	}
 	
 	//AI picks and fires at a target
-	public String fireAtTarget(int xCoord, int yCoord)
+	public void fireAtTarget(Tile tileToFireAt)
 	{
+		int xCoord = tileToFireAt.getXCoord();
+		int yCoord = tileToFireAt.getYCoord();
+		System.out.println("The AI is firing at " + xCoord + ", " + yCoord);
 		aiBoard.fireAtTile(xCoord, yCoord);
-		return aiBoard.getTile(xCoord, yCoord).getContentOfTile();		
+		//return aiBoard.getTile(xCoord, yCoord).getContentOfTile();		
+	}
+	
+	public void didTheAIHit(Tile tileToCheck)
+	{
+		int xCoord = tileToCheck.getXCoord();
+		int yCoord = tileToCheck.getYCoord();
+		String contentOfTile = aiBoard.getTile(xCoord, yCoord).getContentOfTile();
+		if(contentOfTile.equalsIgnoreCase("Hit"))
+		{
+			tilesThatAreHit.add(tileToCheck);	
+		}
 	}
 	
 	//Records the content of the tile internally
 	public void recordTileContent(int xCoord, int yCoord, String contentOfTile)
-	{
+	{		
 		if(contentOfTile.equalsIgnoreCase("Empty"))
 		{
 			
 		}
 	}
 	
+	//Check if there is any hitTiles on the board
+	public boolean isThereAnyHitTiles()
+	{
+		if(tilesThatAreHit.size() > 0)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	
+	//Simple method to try and introduce a little smarter AI
+	public int whatIsOpposingNum(int numToCheck)
+	{
+		if(numToCheck == 0)
+		{
+			return 2;
+		}
+		if(numToCheck == 2)
+		{
+			return 0;
+		}
+		if(numToCheck == 1)
+		{
+			return 3;
+		}
+		if(numToCheck == 3)
+		{
+			return 1;
+		}
+		System.out.println("Error in Opposing Number Generator");
+		return 0;
+	}
+	
+	public void removeHitTilesAfterSinking()
+	{
+		for(int i = 0; i < tilesThatAreHit.size(); i++)
+		{
+			if(tilesThatAreHit.get(i).getContentOfTile().equalsIgnoreCase("Sunk"))
+			{
+				tilesThatAreSunk.add(tilesThatAreHit.get(i));
+				tilesThatAreHit.remove(i);
+			}
+		}
+	}
+	
+	//Selects a single tile, and checks around it to see if any tiles can be hit
+	public Tile pickASurroundingTile(int xCoord, int yCoord) throws InterruptedException
+	{
+		System.out.println("The AI is using Tile: " + xCoord + ", " + yCoord + " as the center point" );
+		ArrayList<Tile> contentOfNeighbouringTiles = new ArrayList<Tile>();
+		//Step 1: Check each direction around the tile in question to see what its content is		
+		contentOfNeighbouringTiles.add(aiBoard.getTile(xCoord, yCoord-1)); //0 North
+		contentOfNeighbouringTiles.add(aiBoard.getTile(xCoord+1, yCoord)); //1 East
+		contentOfNeighbouringTiles.add(aiBoard.getTile(xCoord, yCoord+1)); //2 South
+		contentOfNeighbouringTiles.add(aiBoard.getTile(xCoord-1, yCoord)); //3 West
+		
+		//Step 2: Check each tile for its content
+		for(int i = 0; i < contentOfNeighbouringTiles.size(); i++)
+		{
+//			if(aiBoard.isTileOutOfBounds(contentOfNeighbouringTiles.get(i)))
+//			{
+//				return null;
+//			}
+			
+			//Check for useless hit tiles
+			if(contentOfNeighbouringTiles.get(whatIsOpposingNum(i)) != null && contentOfNeighbouringTiles.get(i) != null && contentOfNeighbouringTiles.get(whatIsOpposingNum(i)).getContentOfTile().equalsIgnoreCase("Hit") && !contentOfNeighbouringTiles.get(i).getContentOfTile().equalsIgnoreCase("Hit"))
+			{
+				System.out.println("This Tile is useless, remove it from the board");
+				for(int y = 0; y < tilesThatAreHit.size(); y++)
+				{
+					if(tilesThatAreHit.get(y).getXCoord() == xCoord && tilesThatAreHit.get(y).getYCoord() == yCoord)
+					{
+						tilesThatAreHit.remove(y);
+					}
+				}
+				
+			}
+			
+			//Check the opposing number to see if a line is possible
+			if(contentOfNeighbouringTiles.get(whatIsOpposingNum(i)) != null && contentOfNeighbouringTiles.get(i) != null && contentOfNeighbouringTiles.get(whatIsOpposingNum(i)).getContentOfTile().equalsIgnoreCase("Hit") && !contentOfNeighbouringTiles.get(i).hasTileHit())					
+			{
+				System.out.println("Line Attack might be possible");
+				return contentOfNeighbouringTiles.get(i);
+			}
+			
+			//Check for a non-line attack
+			if(contentOfNeighbouringTiles.get(i) != null && !contentOfNeighbouringTiles.get(i).getContentOfTile().equalsIgnoreCase("Sunk") && !contentOfNeighbouringTiles.get(i).getContentOfTile().equalsIgnoreCase("Miss") && !contentOfNeighbouringTiles.get(i).hasTileHit())
+			{
+				//Step 3: Return the tile if its content equals empty
+				System.out.println("Firing without line attack");
+				return contentOfNeighbouringTiles.get(i);
+			}
+		}
+		
+		//Step 3A: Return null if no tiles are available
+		System.out.println("Cannot find any tiles to hit");
+		return null;
+	}
 	//Checks if the AI picked a sunken or missed tile
 	public boolean isTileSunkenOrMiss(int xCoord, int yCoord)
 	{
-		if(aiBoard.getTile(xCoord, yCoord).getContentOfTile().equalsIgnoreCase("Miss") || aiBoard.getTile(xCoord, yCoord).getContentOfTile().equalsIgnoreCase(""))
+		if(aiBoard.getTile(xCoord, yCoord).getContentOfTile().equalsIgnoreCase("Miss"))
 		{
-			
+			tilesThatAreMiss.add(aiBoard.getTile(xCoord, yCoord));
+		}
+		if(aiBoard.getTile(xCoord, yCoord).getContentOfTile().equalsIgnoreCase("Sunk"))
+		{
+			tilesThatAreSunk.add(aiBoard.getTile(xCoord, yCoord));
 		}
 		
 		for(int x = 0; x < tilesThatAreMiss.size(); x++)
