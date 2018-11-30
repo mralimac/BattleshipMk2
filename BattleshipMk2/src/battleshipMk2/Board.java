@@ -83,30 +83,42 @@ public class Board extends Main
 		int shipID = shipsOnBoard.size() + 1;
 		placeShipInTiles(randomXCoord, randomYCoord, shipID, validDirection, shipLength);
 		this.numOfShips++;
-		shipsOnBoard.add(new Ship(shipID, shipType, shipLength, validDirection, randomXCoord, randomYCoord, shipName));
+		shipsOnBoard.add(new Ship(shipID, shipType, shipLength, validDirection, randomXCoord, randomYCoord));
 		//System.out.println("The AI successfully placed a ship");
 		//System.out.println("AI Ship Details:\n Ship ID: " + shipID + "\nShipType: " + shipType + "\nShipLength: "+ shipLength + "\nShip Direction: " + vaildDirection + "\nX and Y Coord: " + randomXCoord + "," + randomYCoord);
 	}
 	
 	//Adds a players ship to the board
-	public void addPlayerShipToBoard()
+	public void addPlayerShipToBoard(int shipType)
 	{
-		//Ask for the ships name
-		System.out.println("Please enter a ship name");		
-		String shipName = getUserStringInput();
+		String shipTypeString = null;
+		switch(shipType)
+		{
+		case 1: shipTypeString = "Minesweeper";
+		break;
+		case 2: shipTypeString = "Corvette";
+		break;
+		case 3: shipTypeString = "Submarine";
+		break;
+		case 4: shipTypeString = "Battleship";
+		break;
+		case 5: shipTypeString = "Aircraft Carrier";
+		break;
+		}
 		
+		System.out.println("Placing " + shipTypeString);
 		//Ask for the ships type which determines its length and health
-		System.out.println("Please enter a ship type");
-		System.out.println("1 - Minesweeper");
-		System.out.println("2 - Corvette");
-		System.out.println("3 - Submarine");
-		System.out.println("4 - Battleship");
-		System.out.println("5 - Aircraft Carrier");
-		int shipType = getUserIntInput();
+//		System.out.println("Please enter a ship type");
+//		System.out.println("1 - Minesweeper");
+//		System.out.println("2 - Corvette");
+//		System.out.println("3 - Submarine");
+//		System.out.println("4 - Battleship");
+//		System.out.println("5 - Aircraft Carrier");
+//		int shipType = getUserIntInput();
 		int shipLength = 0;
 		switch(shipType)
 		{
-		case 1: shipLength = 1;
+		case 1: shipLength = 2;
 		break;
 		case 2: shipLength = 3;
 		break;
@@ -157,7 +169,7 @@ public class Board extends Main
 		int shipID = shipsOnBoard.size() + 1;
 		placeShipInTiles(shipBowXCoord, shipBowYCoord, shipID, shipDirection, shipLength);
 		this.numOfShips++;
-		shipsOnBoard.add(new Ship(shipID, shipType, shipLength, shipDirection, shipBowXCoord, shipBowYCoord, shipName));
+		shipsOnBoard.add(new Ship(shipID, shipType, shipLength, shipDirection, shipBowXCoord, shipBowYCoord));
 	}
 	
 	//This method assigns the ships and its subsections to tiles
@@ -291,11 +303,11 @@ public class Board extends Main
 				Ship shipGettingHit = getShip(shipID);
 				shipGettingHit.hitShip(shipSection);		
 
-				System.out.println(shipGettingHit.getShipName() +" ("+ shipGettingHit.getShipTypeString() +") has been hit!");
-				System.out.println("Remaining Health of " + shipGettingHit.getShipName() + ":" + shipGettingHit.getShipHealth() + "/" + shipGettingHit.getShipLength());
+				System.out.println(shipGettingHit.getShipID() +" ("+ shipGettingHit.getShipTypeString() +") has been hit!");
+				System.out.println("Remaining Health of " + shipGettingHit.getShipID() + ":" + shipGettingHit.getShipHealth() + "/" + shipGettingHit.getShipLength());
 				if(shipGettingHit.isShipSunk())
 				{
-					System.out.println(shipGettingHit.getShipName() + " has been sunk!");
+					System.out.println(shipGettingHit.getShipID() + " has been sunk!");
 					shipSunk(shipGettingHit.getShipID());
 				}
 			}

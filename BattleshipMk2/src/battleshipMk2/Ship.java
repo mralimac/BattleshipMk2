@@ -12,12 +12,12 @@ public class Ship
 	private int shipDirection;
 	private int xCoord;
 	private int yCoord;
-	private String shipName;
+	
 	private ArrayList<Integer> shipSections = new ArrayList<Integer>();
 	//End Attribute
 	
 	//Constructor Section
-	public Ship(int shipID, int typeOfShip, int lengthOfShip, int shipDirection, int xCoord, int yCoord, String shipName)
+	public Ship(int shipID, int typeOfShip, int lengthOfShip, int shipDirection, int xCoord, int yCoord)
 	{
 		this.shipID = shipID;
 		this.typeOfShip = typeOfShip;
@@ -26,7 +26,7 @@ public class Ship
 		this.xCoord = xCoord;
 		this.yCoord = yCoord;
 		this.healthOfShip = lengthOfShip;
-		this.shipName = shipName;
+		
 		for(int i = 0; i < lengthOfShip; i++) 
 		{
 			shipSections.add(0);
@@ -55,19 +55,7 @@ public class Ship
 	{
 		return this.shipID;
 	}
-	
-	//Sets the ships name
-	public void setShipName(String shipName)
-	{
-		this.shipName = shipName;
-	}
-	
-	//Returns the ship's name
-	public String getShipName()
-	{
-		return this.shipName;
-	}
-	
+		
 	//Returns the ship's length	
 	public int getShipLength()
 	{

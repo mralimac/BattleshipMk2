@@ -13,7 +13,7 @@ class ShipTestCase {
 	@Test
 	void createNewShip()
 	{
-		Ship testShip1 = new Ship(0, 1, 1, 1, 1, 1, "Hi");
+		Ship testShip1 = new Ship(0, 1, 1, 1, 1, 1);
 		if(testShip1.getShipID() < 0)
 		{
 			fail("No Ship Generated");
@@ -23,7 +23,7 @@ class ShipTestCase {
 	@Test
 	void testGetShipHealth()
 	{
-		Ship testShip1 = new Ship(0, 1, 1, 1, 1, 1, "Hi");
+		Ship testShip1 = new Ship(0, 1, 1, 1, 1, 1);
 		int testShip1Health = testShip1.getShipHealth();
 		if(testShip1Health < 0)
 		{
@@ -35,23 +35,11 @@ class ShipTestCase {
 	@Test
 	void testGetShipType()
 	{
-		Ship testShip1 = new Ship(0, 1, 1, 1, 1, 1, "Hi");
+		Ship testShip1 = new Ship(0, 1, 1, 1, 1, 1);
 		String shipType = testShip1.getShipTypeString();
 		if(!shipType.equalsIgnoreCase("Minesweeper"))
 		{
 			fail("Incorrect Ship Returned");
 		}
 	}
-	
-	@Test
-	void testChangeShipName()
-	{
-		Ship testShip1 = new Ship(0, 1, 1, 1, 1, 1, "Hi");
-		testShip1.setShipName("New Ship Name");
-		if(!testShip1.getShipName().equalsIgnoreCase("New Ship Name"))
-		{
-			fail("Ship Name is incorrect");
-		}
-	}
-
 }

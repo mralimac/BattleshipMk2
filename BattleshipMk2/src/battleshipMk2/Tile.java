@@ -26,6 +26,11 @@ public class Tile
 	}
 	//End Constructor
 	
+	public Tile(int xCoord, int yCoord) {
+		this.xCoord = xCoord;
+		this.yCoord = yCoord;
+	}
+
 	//Method Section
 	//Get full info from the Tile
 	public String getFullContent()

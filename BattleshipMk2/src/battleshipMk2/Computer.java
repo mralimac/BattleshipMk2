@@ -8,16 +8,19 @@ public class Computer
 {
 	//Attribute Section
 	private Board aiBoard;
+	private Board enemyBoard;
 	private int comScore;
 	private ArrayList<Tile> tilesThatAreHit = new ArrayList<Tile>();
 	private ArrayList<Tile> tilesThatAreMiss = new ArrayList<Tile>();
 	private ArrayList<Tile> tilesThatAreSunk = new ArrayList<Tile>();
+	private ArrayList<Tile> bannedTiles = new ArrayList<Tile>();
 	//End Attribute
 	
 	//Constructor Section
-	public Computer(Board aiBoard)
+	public Computer(Board aiBoard, Board enemyBoard)
 	{
 		this.aiBoard = aiBoard;
+		this.enemyBoard = enemyBoard;
 		placeShips();
 	}
 	//End Constructor
@@ -44,43 +47,63 @@ public class Computer
 		return this.comScore;
 	}
 	
-	public void fire() throws InterruptedException
+	public void fire()
 	{
 		Tile selectedTile = null;
 		//Step 1: Check for Hit Tiles
 		if(isThereAnyHitTiles())
 		{
-			//Step 1A: If there is a hit tile available, then pick one at random
+			//Step 1A: If there is a hit tile available, then pick one at random and check if its banned
 			int randomNumberToPickTileWith = ThreadLocalRandom.current().nextInt(0, this.tilesThatAreHit.size());
 			Tile randomHitTile = tilesThatAreHit.get(randomNumberToPickTileWith);
+			
+			while(isTileBanned(randomHitTile))
+			{
+				tilesThatAreHit.remove(randomNumberToPickTileWith);
+				randomNumberToPickTileWith = ThreadLocalRandom.current().nextInt(0, this.tilesThatAreHit.size());
+				randomHitTile = tilesThatAreHit.get(randomNumberToPickTileWith);
+			}
+			
+			
 			//Step 1B: With a random hit tile selected, check the surrounding tiles for available tiles
 			Tile surroundingTilePicked = pickASurroundingTile(randomHitTile.getXCoord(), randomHitTile.getYCoord());
+			
 			//Step 1C: Check to make sure the tile picked isn't null, if it is, reroll the random tile to hit
 			while(surroundingTilePicked == null)
-			{
+			{		
 				//Step 1Ci: If there is a hit tile available, then pick one at random
 				randomNumberToPickTileWith = ThreadLocalRandom.current().nextInt(0, this.tilesThatAreHit.size());
 				randomHitTile = tilesThatAreHit.get(randomNumberToPickTileWith);
+				
 				//Step 1Cii: With a random hit tile selected, check the surrounding tiles for available tiles
 				surroundingTilePicked = pickASurroundingTile(randomHitTile.getXCoord(), randomHitTile.getYCoord());	
+			
 			}
+			
 			//Step 1D: With the hit tile selected and verified to be empty, assign it to the general selection
 			selectedTile = surroundingTilePicked;
 		}
+		
 		//Step 2: With no hit tiles available, then fire at random
 		else
 		{
+			
 			//Step 2A: Select a random Tile on the board to fire at
 			Tile randomFireTile = fireAtRandom();
+			
 			//Step 2B: Fire at target
 			selectedTile = randomFireTile;
 		}
+		
 		//Step 3: Fire at the general selected tile
 		fireAtTarget(selectedTile);
+		
 		//Step 3: Check if the AI hit a ship or not
 		didTheAIHit(selectedTile);
+		
 		//Step 4: Recheck the AI's internal logic on which tiles are sunk or not
 		removeHitTilesAfterSinking();
+		
 		//Step 5: There is a infintely small chance of the AI mistaking a minesweeper for a blown up ship if the circumstances are just perfect
 		checkForAnomlies();
 		
@@ -95,13 +118,13 @@ public class Computer
 	
 	public Tile fireAtRandom()
 	{
-		int randomXCoord = ThreadLocalRandom.current().nextInt(0, this.aiBoard.getLengthOfBoard());
-		int randomYCoord = ThreadLocalRandom.current().nextInt(0, this.aiBoard.getHeightOfBoard());
+		int randomXCoord = ThreadLocalRandom.current().nextInt(0, this.enemyBoard.getLengthOfBoard());
+		int randomYCoord = ThreadLocalRandom.current().nextInt(0, this.enemyBoard.getHeightOfBoard());
 		while(!isTileSunkenOrMiss(randomXCoord, randomYCoord))
 		{
 			System.out.println("AI needs to reroll its selection");
-			randomXCoord = ThreadLocalRandom.current().nextInt(0, this.aiBoard.getLengthOfBoard());
-			randomYCoord = ThreadLocalRandom.current().nextInt(0, this.aiBoard.getHeightOfBoard());			
+			randomXCoord = ThreadLocalRandom.current().nextInt(0, this.enemyBoard.getLengthOfBoard());
+			randomYCoord = ThreadLocalRandom.current().nextInt(0, this.enemyBoard.getHeightOfBoard());			
 		}
 		return aiBoard.getTile(randomXCoord, randomYCoord);
 		
@@ -113,7 +136,7 @@ public class Computer
 		int xCoord = tileToFireAt.getXCoord();
 		int yCoord = tileToFireAt.getYCoord();
 		System.out.println("The AI is firing at " + xCoord + ", " + yCoord);
-		aiBoard.fireAtTile(xCoord, yCoord);
+		enemyBoard.fireAtTile(xCoord, yCoord);
 		//return aiBoard.getTile(xCoord, yCoord).getContentOfTile();		
 	}
 	
@@ -121,11 +144,24 @@ public class Computer
 	{
 		int xCoord = tileToCheck.getXCoord();
 		int yCoord = tileToCheck.getYCoord();
-		String contentOfTile = aiBoard.getTile(xCoord, yCoord).getContentOfTile();
+		String contentOfTile = enemyBoard.getTile(xCoord, yCoord).getContentOfTile();
 		if(contentOfTile.equalsIgnoreCase("Hit"))
 		{
 			tilesThatAreHit.add(tileToCheck);	
 		}
+	}
+	
+	//Check if tile is banned
+	public boolean isTileBanned(Tile tileToCheck)
+	{
+		for(int i = 0; i < bannedTiles.size(); i++)
+		{
+			if(bannedTiles.get(i).getXCoord() == tileToCheck.getXCoord() && bannedTiles.get(i).getYCoord() ==  tileToCheck.getYCoord())
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	//Records the content of the tile internally
@@ -187,15 +223,15 @@ public class Computer
 	
 	public void checkForAnomlies()
 	{
-		for(int i = 0; i < aiBoard.getTilesOnBoard().size(); i++)
+		for(int i = 0; i < this.enemyBoard.getTilesOnBoard().size(); i++)
 		{
-			if(aiBoard.getTilesOnBoard().get(i).getContentOfTile() == "Hit")
+			if(this.enemyBoard.getTilesOnBoard().get(i).getContentOfTile() == "Hit")
 			{
 				for(int x = 0; x < tilesThatAreHit.size(); x++)
 				{
-					if(tilesThatAreHit.get(x).getXCoord() != aiBoard.getTilesOnBoard().get(i).getXCoord() && tilesThatAreHit.get(x).getYCoord() != aiBoard.getTilesOnBoard().get(i).getYCoord())
+					if(tilesThatAreHit.get(x).getXCoord() != this.enemyBoard.getTilesOnBoard().get(i).getXCoord() && tilesThatAreHit.get(x).getYCoord() != this.enemyBoard.getTilesOnBoard().get(i).getYCoord())
 					{
-						tilesThatAreHit.add(aiBoard.getTilesOnBoard().get(i));
+						tilesThatAreHit.add(this.enemyBoard.getTilesOnBoard().get(i));
 					}
 				}
 			}
@@ -203,15 +239,15 @@ public class Computer
 	}
 	
 	//Selects a single tile, and checks around it to see if any tiles can be hit
-	public Tile pickASurroundingTile(int xCoord, int yCoord) throws InterruptedException
+	public Tile pickASurroundingTile(int xCoord, int yCoord)
 	{
 		System.out.println("The AI is using Tile: " + xCoord + ", " + yCoord + " as the center point" );
 		ArrayList<Tile> contentOfNeighbouringTiles = new ArrayList<Tile>();
 		//Step 1: Check each direction around the tile in question to see what its content is		
-		contentOfNeighbouringTiles.add(aiBoard.getTile(xCoord, yCoord-1)); //0 North
-		contentOfNeighbouringTiles.add(aiBoard.getTile(xCoord+1, yCoord)); //1 East
-		contentOfNeighbouringTiles.add(aiBoard.getTile(xCoord, yCoord+1)); //2 South
-		contentOfNeighbouringTiles.add(aiBoard.getTile(xCoord-1, yCoord)); //3 West
+		contentOfNeighbouringTiles.add(this.enemyBoard.getTile(xCoord, yCoord-1)); //0 North
+		contentOfNeighbouringTiles.add(this.enemyBoard.getTile(xCoord+1, yCoord)); //1 East
+		contentOfNeighbouringTiles.add(this.enemyBoard.getTile(xCoord, yCoord+1)); //2 South
+		contentOfNeighbouringTiles.add(this.enemyBoard.getTile(xCoord-1, yCoord)); //3 West
 		
 		//Step 2: Check each tile for its content
 		for(int i = 0; i < contentOfNeighbouringTiles.size(); i++)
@@ -253,18 +289,27 @@ public class Computer
 		
 		//Step 3A: Return null if no tiles are available
 		System.out.println("Cannot find any tiles to hit");
+		try {
+			//Come back to this bit, you need to work out a way to remove tiles from the hit list and make the AI revert to random targetting
+			System.out.println("Size of Tiles Hit" + tilesThatAreHit.size());
+			Thread.sleep(500);
+			
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 	//Checks if the AI picked a sunken or missed tile
 	public boolean isTileSunkenOrMiss(int xCoord, int yCoord)
 	{
-		if(aiBoard.getTile(xCoord, yCoord).getContentOfTile().equalsIgnoreCase("Miss"))
+		if(enemyBoard.getTile(xCoord, yCoord).getContentOfTile().equalsIgnoreCase("Miss"))
 		{
-			tilesThatAreMiss.add(aiBoard.getTile(xCoord, yCoord));
+			tilesThatAreMiss.add(this.enemyBoard.getTile(xCoord, yCoord));
 		}
-		if(aiBoard.getTile(xCoord, yCoord).getContentOfTile().equalsIgnoreCase("Sunk"))
+		if(enemyBoard.getTile(xCoord, yCoord).getContentOfTile().equalsIgnoreCase("Sunk"))
 		{
-			tilesThatAreSunk.add(aiBoard.getTile(xCoord, yCoord));
+			tilesThatAreSunk.add(this.enemyBoard.getTile(xCoord, yCoord));
 		}
 		
 		for(int x = 0; x < tilesThatAreMiss.size(); x++)

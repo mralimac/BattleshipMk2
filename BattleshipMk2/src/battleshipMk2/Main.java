@@ -15,38 +15,26 @@ public class Main {
 	{
 		//Board board = new Board();	
 		Board aiBoard = new Board();
+		Board playerBoard = new Board();
+		
 		//Board aiBoard2 = new Board();
 		//board.printOutBoard();
-		Computer comPlayer1 = new Computer(aiBoard);
-		comPlayer1.fire();
+		Computer comPlayer1 = new Computer(aiBoard, playerBoard);		
 		//Computer comPlayer2 = new Computer(aiBoard2);
 		
-		//Player player1 = new Player("Ali");		
-		//board.addPlayerShipToBoard();
-		//board.numOfShips();
-		//comPlayer.getAIBoardPrintOut();
-		//board.printOutGamePlayBoard();
-		aiBoard.printOutGamePlayBoard();
-		System.out.println("");
-		//aiBoard2.printOutGamePlayBoard();
+		//Player player1 = new Player("Ali", playerBoard, aiBoard, 1);
+		Computer player1 = new Computer(playerBoard, aiBoard);
+		//player1.placeShips();
 		
-		while(aiBoard.shipsExist())
-		{
+		while(aiBoard.shipsExist() || playerBoard.shipsExist())
+		{			
+			player1.fire();
+			aiBoard.printOutGamePlayBoard();
+			
 			comPlayer1.fire();
-			comPlayer1.getAIBoardPrintOut();
+			playerBoard.printOutGamePlayBoard();
 			Thread.sleep(1000);
 		}
-		
-		
-//		while(aiBoard.shipsExist())
-//		{
-//			System.out.println("Please specify an X coordinate");
-//			int xCoord = player1.getPlayerCoord();
-//			System.out.println("Please specify an Y coordinate");
-//			int yCoord = player1.getPlayerCoord();		
-//			aiBoard.fireAtTile(xCoord, yCoord);
-//			aiBoard.printOutGamePlayBoard();
-//		}
 		System.out.println("Gameover!");
 		scannerClose();
 	}
